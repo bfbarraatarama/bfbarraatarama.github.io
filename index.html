@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BFBA | Intelligent Control Synthesis for Quadrotor Systems</title>
+  <meta
+    name="description"
+    content="Intelligent control synthesis and computational evaluation for quadrotor systems — Bruno F. Barra Atarama."
+  />
+  <style>
+    :root {
+      --bg: #f7fafc;
+      --surface: #ffffff;
+      --surface-muted: #eef4f8;
+      --ink: #0d2338;
+      --ink-soft: #50657a;
+      --line: #d7e2ea;
+      --blue: #075b91;
+      --blue-deep: #063a60;
+      --cyan: #1ba7ce;
+      --cyan-soft: #dff5fa;
+      --shadow: 0 18px 48px rgba(7, 41, 66, 0.08);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --max: 1160px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.55;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    header {
+      height: 78px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(215, 226, 234, 0.8);
+      background: rgba(247, 250, 252, 0.92);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      font-weight: 750;
+      color: var(--blue-deep);
+      font-size: 1.08rem;
+      letter-spacing: 0.13em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      font-size: 0.93rem;
+      color: var(--ink-soft);
+      font-weight: 500;
+    }
+
+    .nav-links a:hover {
+      color: var(--blue);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.03fr 0.97fr;
+      gap: 58px;
+      padding: 82px 0 76px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 21px;
+      color: var(--blue);
+      font-weight: 650;
+      font-size: 0.77rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      display: inline-block;
+      width: 30px;
+      height: 2px;
+      background: var(--cyan);
+    }
+
+    h1 {
+      font-size: clamp(2.75rem, 4.5vw, 4.35rem);
+      letter-spacing: -0.06em;
+      line-height: 1.05;
+      margin: 0 0 25px;
+      color: var(--ink);
+      max-width: 610px;
+    }
+
+    .hero-copy {
+      margin: 0 0 36px;
+      color: var(--ink-soft);
+      font-size: 1.1rem;
+      max-width: 560px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .button {
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-size: 0.94rem;
+      font-weight: 600;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button-primary {
+      color: #fff;
+      background: var(--blue-deep);
+      box-shadow: 0 12px 24px rgba(6, 58, 96, 0.17);
+    }
+
+    .button-primary:hover {
+      background: var(--blue);
+    }
+
+    .button-secondary {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      color: var(--blue-deep);
+    }
+
+    .diagram {
+      min-height: 506px;
+      border-radius: var(--radius-lg);
+      background:
+        radial-gradient(circle at 74% 20%, rgba(27, 167, 206, 0.18), transparent 34%),
+        linear-gradient(145deg, #eef7fb 0%, #ffffff 57%, #eef3f7 100%);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .diagram-caption {
+      position: absolute;
+      left: 25px;
+      bottom: 22px;
+      color: var(--ink-soft);
+      font-size: 0.76rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .diagram svg {
+      width: min(94%, 520px);
+      height: auto;
+    }
+
+    section {
+      scroll-margin-top: 92px;
+    }
+
+    .project-intro {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 48px 52px;
+      display: grid;
+      grid-template-columns: 0.37fr 0.63fr;
+      gap: 64px;
+      align-items: start;
+      box-shadow: 0 12px 42px rgba(7, 41, 66, 0.04);
+    }
+
+    .section-label {
+      display: block;
+      color: var(--blue);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      font-size: clamp(1.65rem, 2.3vw, 2.15rem);
+      margin: 0;
+      line-height: 1.19;
+      letter-spacing: -0.035em;
+    }
+
+    .project-intro p {
+      margin: 0;
+      font-size: 1.04rem;
+      color: var(--ink-soft);
+    }
+
+    .workstreams {
+      padding: 75px 0 78px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 28px;
+      margin-bottom: 34px;
+      align-items: end;
+    }
+
+    .section-header p {
+      margin: 0;
+      max-width: 470px;
+      color: var(--ink-soft);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 27px 25px 25px;
+      min-height: 216px;
+    }
+
+    .card-number {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+
+    .card h3 {
+      margin: 0 0 11px;
+      font-size: 1.08rem;
+      letter-spacing: -0.02em;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    .domains {
+      background: var(--blue-deep);
+      color: #fff;
+      border-radius: var(--radius-lg);
+      padding: 48px 52px;
+      display: flex;
+      justify-content: space-between;
+      gap: 42px;
+      align-items: center;
+    }
+
+    .domains .section-label {
+      color: #78dbf1;
+    }
+
+    .domains h2 {
+      max-width: 365px;
+    }
+
+    .tags {
+      max-width: 555px;
+      display: flex;
+      gap: 11px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .tag {
+      border: 1px solid rgba(143, 202, 224, 0.33);
+      background: rgba(255, 255, 255, 0.06);
+      color: #e9f6fb;
+      padding: 10px 15px;
+      border-radius: 100px;
+      font-size: 0.91rem;
+    }
+
+    .about {
+      padding: 78px 0 74px;
+      display: grid;
+      grid-template-columns: 0.58fr 0.42fr;
+      gap: 38px;
+    }
+
+    .profile,
+    .contact {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 43px 45px;
+    }
+
+    .profile h2 {
+      margin-bottom: 22px;
+    }
+
+    .profile p {
+      color: var(--ink-soft);
+      font-size: 1rem;
+      margin: 0;
+      max-width: 570px;
+    }
+
+    .credentials {
+      margin-top: 31px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+    }
+
+    .credential {
+      display: flex;
+      gap: 13px;
+      align-items: flex-start;
+    }
+
+    .dot {
+      flex: 0 0 auto;
+      margin-top: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+    }
+
+    .contact {
+      background: var(--surface-muted);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .contact p {
+      margin: 16px 0 32px;
+      color: var(--ink-soft);
+    }
+
+    .email {
+      display: inline-flex;
+      width: fit-content;
+      padding: 13px 17px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--blue-deep);
+      font-weight: 600;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      color: var(--ink-soft);
+      padding: 26px 0 34px;
+      font-size: 0.85rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    @media (max-width: 970px) {
+      .hero,
+      .project-intro,
+      .about {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        gap: 44px;
+      }
+
+      .diagram {
+        min-height: 410px;
+      }
+
+      .project-intro {
+        gap: 26px;
+      }
+
+      .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .domains {
+        display: block;
+      }
+
+      .tags {
+        justify-content: flex-start;
+        margin-top: 33px;
+      }
+    }
+
+    @media (max-width: 610px) {
+      .container {
+        width: min(var(--max), calc(100% - 30px));
+      }
+
+      header {
+        height: 70px;
+      }
+
+      .nav-links a:not(:last-child) {
+        display: none;
+      }
+
+      .hero {
+        padding: 53px 0 48px;
+      }
+
+      h1 {
+        font-size: 2.45rem;
+      }
+
+      .diagram {
+        min-height: 310px;
+      }
+
+      .project-intro,
+      .domains,
+      .profile,
+      .contact {
+        padding: 32px 27px;
+      }
+
+      .workstreams {
+        padding: 54px 0;
+      }
+
+      .section-header {
+        display: block;
+      }
+
+      .section-header p {
+        margin-top: 18px;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about {
+        padding: 54px 0;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="container" aria-label="Main navigation">
+      <a class="brand" href="#top" aria-label="BFBA home">BFBA</a>
+      <div class="nav-links">
+        <a href="#project">Project</a>
+        <a href="#domains">Domains</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="container hero" aria-label="Introduction">
+      <div>
+        <p class="eyebrow">Autonomous aerial systems</p>
+        <h1>Intelligent Control Synthesis for Quadrotor Systems</h1>
+        <p class="hero-copy">
+          Design and computational evaluation of AI-based control strategies for
+          autonomous aerial vehicles operating under dynamic conditions and disturbances.
+        </p>
+        <div class="actions">
+          <a class="button button-primary" href="#project">Explore the project</a>
+          <a class="button button-secondary" href="#contact">Contact</a>
+        </div>
+      </div>
+
+      <div class="diagram" aria-label="Schematic quadrotor control diagram">
+        <svg viewBox="0 0 580 490" role="img" aria-label="Quadrotor schematic with reference trajectory and control signals">
+          <defs>
+            <linearGradient id="pathGlow" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#8cdced" stop-opacity="0.12" />
+              <stop offset="1" stop-color="#1ba7ce" stop-opacity="0.85" />
+            </linearGradient>
+          </defs>
+          <g fill="none">
+            <path d="M48 390 C102 378 118 300 172 294 C222 288 226 341 280 335 C353 327 346 182 442 167 C481 161 505 179 532 150" stroke="url(#pathGlow)" stroke-width="3" stroke-dasharray="7 9" />
+            <circle cx="48" cy="390" r="4" fill="#1ba7ce" opacity=".55" />
+            <circle cx="532" cy="150" r="6" fill="#1ba7ce" />
+          </g>
+          <g transform="translate(290 214)">
+            <line x1="-95" y1="-52" x2="95" y2="52" stroke="#075b91" stroke-width="6" stroke-linecap="round" />
+            <line x1="-95" y1="52" x2="95" y2="-52" stroke="#075b91" stroke-width="6" stroke-linecap="round" />
+            <rect x="-38" y="-23" width="76" height="46" rx="11" fill="#063a60" />
+            <rect x="-21" y="-9" width="42" height="18" rx="4" fill="#dff5fa" opacity=".9" />
+            <g stroke="#1ba7ce" stroke-width="3">
+              <circle cx="-101" cy="-56" r="28" />
+              <circle cx="101" cy="-56" r="28" />
+              <circle cx="-101" cy="56" r="28" />
+              <circle cx="101" cy="56" r="28" />
+            </g>
+            <g stroke="#1ba7ce" stroke-width="2" opacity=".44">
+              <circle cx="-101" cy="-56" r="34" />
+              <circle cx="101" cy="-56" r="34" />
+              <circle cx="-101" cy="56" r="34" />
+              <circle cx="101" cy="56" r="34" />
+            </g>
+          </g>
+          <g font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#50657a" letter-spacing="1.1">
+            <text x="71" y="395">REFERENCE TRAJECTORY</text>
+            <text x="404" y="135">TARGET STATE</text>
+            <text x="211" y="115">CONTROL POLICY</text>
+          </g>
+          <g stroke="#1ba7ce" stroke-width="1.5" opacity=".7">
+            <line x1="286" y1="124" x2="286" y2="173" stroke-dasharray="3 5" />
+            <line x1="462" y1="142" x2="512" y2="149" stroke-dasharray="3 5" />
+          </g>
+          <g transform="translate(445 328)">
+            <line x1="0" y1="0" x2="46" y2="0" stroke="#075b91" stroke-width="1.7" />
+            <line x1="0" y1="0" x2="0" y2="-45" stroke="#075b91" stroke-width="1.7" />
+            <line x1="0" y1="0" x2="-26" y2="21" stroke="#075b91" stroke-width="1.7" />
+            <text x="50" y="4" font-size="12" fill="#075b91">x</text>
+            <text x="-4" y="-52" font-size="12" fill="#075b91">z</text>
+            <text x="-38" y="31" font-size="12" fill="#075b91">y</text>
+          </g>
+        </svg>
+        <span class="diagram-caption">Control · Dynamics · Simulation</span>
+      </div>
+    </section>
+
+    <section id="project" class="container project-intro">
+      <div>
+        <span class="section-label">Project overview</span>
+        <h2>Autonomy through intelligent flight control</h2>
+      </div>
+      <p>
+        This project investigates methods for obtaining and evaluating control strategies
+        for quadrotor systems by integrating flight-dynamics modeling, simulation and
+        artificial intelligence techniques. The focus is on autonomous control behavior
+        and systematic computational assessment under representative operating conditions.
+      </p>
+    </section>
+
+    <section class="container workstreams" aria-label="Technical objectives">
+      <div class="section-header">
+        <div>
+          <span class="section-label">Technical objectives</span>
+          <h2>Core workstreams</h2>
+        </div>
+        <p>
+          A structured framework for studying the synthesis, response and robustness of
+          intelligent quadrotor control strategies.
+        </p>
+      </div>
+      <div class="card-grid">
+        <article class="card">
+          <span class="card-number">01 / SYNTHESIS</span>
+          <h3>Control Synthesis</h3>
+          <p>Explore AI-based methods for obtaining control strategies suited to quadrotor dynamics.</p>
+        </article>
+        <article class="card">
+          <span class="card-number">02 / DYNAMICS</span>
+          <h3>Simulation</h3>
+          <p>Use computational environments to represent vehicle response and operational scenarios.</p>
+        </article>
+        <article class="card">
+          <span class="card-number">03 / ROBUSTNESS</span>
+          <h3>Disturbance Analysis</h3>
+          <p>Assess controller behavior under perturbations and variations in operating conditions.</p>
+        </article>
+        <article class="card">
+          <span class="card-number">04 / ASSESSMENT</span>
+          <h3>Evaluation Framework</h3>
+          <p>Organize metrics and experimental evidence to characterize control performance.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="domains" class="container domains" aria-label="Technical domains">
+      <div>
+        <span class="section-label">Technical domains</span>
+        <h2>Engineering and artificial intelligence</h2>
+      </div>
+      <div class="tags">
+        <span class="tag">Artificial Intelligence</span>
+        <span class="tag">Autonomous Systems</span>
+        <span class="tag">Flight Dynamics</span>
+        <span class="tag">Control Systems</span>
+        <span class="tag">Simulation</span>
+        <span class="tag">Robotics</span>
+      </div>
+    </section>
+
+    <section id="about" class="container about" aria-label="About and contact">
+      <article class="profile">
+        <span class="section-label">About</span>
+        <h2>Bruno F. Barra Atarama</h2>
+        <p>
+          Aerospace engineer and master's student in Artificial Intelligence, with interests
+          in autonomous systems, computational modeling and intelligent control.
+        </p>
+        <div class="credentials">
+          <div class="credential"><span class="dot"></span><span>Aerospace Engineer · Universidad Nacional de La Plata (UNLP)</span></div>
+          <div class="credential"><span class="dot"></span><span>Master's student in Artificial Intelligence · Universidad de San Andrés (UdeSA)</span></div>
+        </div>
+      </article>
+
+      <aside id="contact" class="contact">
+        <div>
+          <span class="section-label">Contact</span>
+          <h2>Project contact</h2>
+          <p>For inquiries related to the project and its technical scope.</p>
+        </div>
+        <span class="email">Contact address available shortly</span>
+      </aside>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>© 2026 Bruno F. Barra Atarama</span>
+      <span>Intelligent Control Synthesis for Quadrotor Systems</span>
+    </div>
+  </footer>
+</body>
+</html>
